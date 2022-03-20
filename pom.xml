@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ch.guengel.memberberry</groupId>
+    <artifactId>memberberry-api-angular</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+
+    <properties>
+        <npm-package.memberberry-server.directory>${project.build.directory}/memberberry-server-api
+        </npm-package.memberberry-server.directory>
+        <openapi-generator-maven-plugin.ngVersion>13.2.0</openapi-generator-maven-plugin.ngVersion>
+        <openapi-generator-maven-plugin.npmRepository>https://colossus.kruemel.home/nexus/repository/memberberry-npm/
+        </openapi-generator-maven-plugin.npmRepository>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
+        <maven-compiler-plugin.version>3.9.0</maven-compiler-plugin.version>
+        <maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
+        <maven-install-plugin.version>3.0.0-M1</maven-install-plugin.version>
+        <maven-jar-plugin.version>3.2.1</maven-jar-plugin.version>
+        <maven-replacer-plugin.version>1.4.1</maven-replacer-plugin.version>
+        <maven-resources-plugin.version>3.0.0</maven-resources-plugin.version>
+        <maven-surefire-plugin.version>2.12.4</maven-surefire-plugin.version>
+        <openapi-generator-maven-plugin.version>5.4.0</openapi-generator-maven-plugin.version>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>mavenCentral</id>
+            <url>https://repo1.maven.org/maven2/</url>
+        </repository>
+
+        <repository>
+            <id>memberberry-maven</id>
+            <name>Memberberry Repository</name>
+            <url>https://colossus.kruemel.home/nexus/repository/memberberry/</url>
+        </repository>
+
+        <repository>
+            <id>memberberry-maven-snapshot</id>
+            <name>Memberberry Repository</name>
+            <url>https://colossus.kruemel.home/nexus/repository/memberberry-snapshot/</url>
+        </repository>
+    </repositories>
+
+    <build>
+        <plugins>
+            <!-- Disable plugin execution of plugins we don't need -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven-jar-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>default-jar</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>default-test</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>default-testCompile</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>default-compile</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>default-resources</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>default-testResources</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>${maven-install-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>default-install</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>${maven-deploy-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>default-deploy</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Download and extract OpenAPI specification -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-openapi-contract-memberberry-server</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>ch.guengel.memberberry</groupId>
+                                    <artifactId>memberberry-api</artifactId>
+                                    <version>${memberberry-api.version}</version>
+                                    <outputDirectory>${project.build.directory}</outputDirectory>
+                                    <includes>openapi/memberberry-server.yaml</includes>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Generate npm package with openapi-generator -->
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>${openapi-generator-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-typescript-angular-source-memberberry-server</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.build.directory}/openapi/memberberry-server.yaml</inputSpec>
+                            <output>${npm-package.memberberry-server.directory}</output>
+                            <skip>false</skip>
+                            <strictSpec>true</strictSpec>
+                            <skipValidateSpec>false</skipValidateSpec>
+                            <generatorName>typescript-angular</generatorName>
+                            <configOptions>
+                                <npmName>@memberberry-npm/memberberry-api-angular</npmName>
+                                <npmRepository>${openapi-generator-maven-plugin.npmRepository}</npmRepository>
+                                <npmVersion>${package.version}</npmVersion>
+                                <apiModulePrefix>MemberberryServer</apiModulePrefix>
+                                <ngVersion>${openapi-generator-maven-plugin.ngVersion}</ngVersion>
+                                <useSingleRequestParameter>true</useSingleRequestParameter>
+                                <supportsES6>true</supportsES6>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Fix issue in the delete HTTP call. There are too many arguments -->
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>maven-replacer-plugin</artifactId>
+                <version>${maven-replacer-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>replace-code-memberberry-server</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                        <configuration>
+                            <ignoreMissingFile>false</ignoreMissingFile>
+                            <file>target/memberberry-server-api/api/berryV1.service.ts</file>
+                            <regex>true</regex>
+                            <replacements>
+                                <replacement>
+                                    <token>[\\t ]+null,</token>
+                                    <value/>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Build and publish npm package -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>${exec-maven-plugin.version}</version>
+                <executions>
+                    <!-- Astro Server -->
+                    <execution>
+                        <id>install-npm-dependencies-memberberry-server</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+
+                        <configuration>
+                            <executable>npm</executable>
+                            <workingDirectory>${npm-package.memberberry-server.directory}</workingDirectory>
+                            <arguments>
+                                <argument>install</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>package-astro-server-angular</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+
+                        <configuration>
+                            <executable>npm</executable>
+                            <workingDirectory>${npm-package.memberberry-server.directory}</workingDirectory>
+                            <arguments>
+                                <argument>run</argument>
+                                <argument>build</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>publish-astro-server-angular-package</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+
+                        <configuration>
+                            <executable>npm</executable>
+                            <workingDirectory>${npm-package.memberberry-server.directory}</workingDirectory>
+                            <arguments>
+                                <argument>publish</argument>
+                                <argument>dist</argument>
+                                <argument>--access=public</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
