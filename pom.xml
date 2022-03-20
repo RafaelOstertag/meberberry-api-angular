@@ -234,7 +234,7 @@
                     </execution>
 
                     <execution>
-                        <id>package-astro-server-angular</id>
+                        <id>package-memberberry-server-angular</id>
                         <phase>package</phase>
                         <goals>
                             <goal>exec</goal>
@@ -251,7 +251,7 @@
                     </execution>
 
                     <execution>
-                        <id>publish-astro-server-angular-package</id>
+                        <id>publish-memberberry-server-angular-package</id>
                         <phase>deploy</phase>
                         <goals>
                             <goal>exec</goal>

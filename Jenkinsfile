@@ -34,15 +34,11 @@ pipeline {
 
             steps {
                 configFileProvider([configFile(fileId: 'b958fc4b-b1bd-4233-8692-c4a26a51c0f4', variable: 'MAVEN_SETTINGS_XML')]) {
-                    sh 'mvn -B -s "$MAVEN_SETTINGS_XML" -Dastro-server-api.version=${VERSION} -Dpackage.version=${NPM_VERSION} clean package'
+                    sh 'mvn -B -s "$MAVEN_SETTINGS_XML" -Dmemberberry-api.version=${VERSION} -Dpackage.version=${NPM_VERSION} clean package'
                 }
-                configFileProvider([configFile(fileId: 'a7bcaf1c-8a86-4633-bc22-2755c797b0fa', targetLocation: 'target/npm-astro-server/.npmrc')]) {
-                    sh 'mvn -B exec:exec@publish-astro-server-angular-package'
+                configFileProvider([configFile(fileId: 'a7bcaf1c-8a86-4633-bc22-2755c797b0fa', targetLocation: 'target/memberberry-server-api/.npmrc')]) {
+                    sh 'mvn -B exec:exec@publish-memberberry-server-angular-package'
                 }
-                configFileProvider([configFile(fileId: 'a7bcaf1c-8a86-4633-bc22-2755c797b0fa', targetLocation: 'target/npm-catalog-fetcher/.npmrc')]) {
-                    sh 'mvn -B exec:exec@publish-astro-server-catalog-fetcher-angular-package'
-                }
-
             }
         }
     }
