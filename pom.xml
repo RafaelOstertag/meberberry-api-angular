@@ -12,7 +12,7 @@
         <npm-package.memberberry-server.directory>${project.build.directory}/memberberry-server-api
         </npm-package.memberberry-server.directory>
         <openapi-generator-maven-plugin.ngVersion>13.2.0</openapi-generator-maven-plugin.ngVersion>
-        <openapi-generator-maven-plugin.npmRepository>https://colossus.kruemel.home/nexus/repository/memberberry-npm/
+        <openapi-generator-maven-plugin.npmRepository>https://rafaelostertag.jfrog.io/artifactory/api/npm/local-npm/
         </openapi-generator-maven-plugin.npmRepository>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -35,15 +35,8 @@
         </repository>
 
         <repository>
-            <id>memberberry-maven</id>
-            <name>Memberberry Repository</name>
-            <url>https://colossus.kruemel.home/nexus/repository/memberberry/</url>
-        </repository>
-
-        <repository>
-            <id>memberberry-maven-snapshot</id>
-            <name>Memberberry Repository</name>
-            <url>https://colossus.kruemel.home/nexus/repository/memberberry-snapshot/</url>
+            <id>rafaelostertag.jfrog.io</id>
+            <url>https://rafaelostertag.jfrog.io/artifactory/maven</url>
         </repository>
     </repositories>
 
@@ -169,8 +162,11 @@
                             <strictSpec>true</strictSpec>
                             <skipValidateSpec>false</skipValidateSpec>
                             <generatorName>typescript-angular</generatorName>
+                            <typeMappings>
+                                <typeMapping>set=Array</typeMapping>
+                            </typeMappings>
                             <configOptions>
-                                <npmName>@memberberry-npm/memberberry-api-angular</npmName>
+                                <npmName>@rafaelostertag/memberberry-api-angular</npmName>
                                 <npmRepository>${openapi-generator-maven-plugin.npmRepository}</npmRepository>
                                 <npmVersion>${package.version}</npmVersion>
                                 <apiModulePrefix>MemberberryServer</apiModulePrefix>
