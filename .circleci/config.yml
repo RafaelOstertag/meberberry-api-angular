@@ -5,7 +5,6 @@ parameters:
     type: string
     default: none
 
-
 jobs:
   build-npm-packages:
     machine:
@@ -16,32 +15,30 @@ jobs:
       - run:
           name: Install node
           command: |
-            nvm install lts/fermium && \
-            nvm use lts/fermium && \
-            nvm alias default lts/fermium
-      - run:
-          command: nvm use lts/fermium && node --version
+            nvm deactivate
+            nvm uninstall --lts=fermium
+            nvm install --lts=fermium
       - run:
           environment:
             VERSION: <<pipeline.parameters.version>>
           name: Generate npm packages
           command: |
-            nvm use lts/fermium &&\
-            NPM_VERSION=$(echo "${VERSION}" | sed -e "s/-SNAPSHOT\$/-dev.$CIRCLE_BUILD_NUM/") && \
-            echo "****" && \
-            echo "VERSION: ${VERSION}" && \
-            echo "NPM_VERSION: ${NPM_VERSION}" && \
-            echo "****" && \
+            nvm use lts/fermium
+            NPM_VERSION=$(echo "${VERSION}" | sed -e "s/-SNAPSHOT\$/-dev.$CIRCLE_BUILD_NUM/") 
+            echo "****" 
+            echo "VERSION: ${VERSION}" 
+            echo "NPM_VERSION: ${NPM_VERSION}" 
+            echo "****" 
             mvn -B -s "${HOME}/project/.circleci/settings.xml" -Dmemberberry-api.version="${VERSION}" -Dpackage.version="${NPM_VERSION}" clean package
       - run:
           name: Login to registry
           command: |
-            nvm use lts/fermium &&\
+            nvm use lts/fermium
             npm set '//rafaelostertag.jfrog.io/artifactory/api/npm/local-npm/:_authToken' "${NPM_TOKEN}"
       - run:
           name: Publish memberberry amgular package
           command: |
-            nvm use lts/fermium &&\
+            nvm use lts/fermium
             mvn -B exec:exec@publish-memberberry-server-angular-package
 
 workflows:
